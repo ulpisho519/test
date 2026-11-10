@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>咖啡展 · 留下聯絡方式</title>
+<style>
+  :root {
+    --bg: #e9eef0;
+    --ink: #1d2b2a;
+    --muted: #5b6b69;
+    --line: #b9c6c8;
+    --cherry: #b3263e;
+    --green: #2f5d50;
+    --card: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #17211f;
+      --ink: #eaf0ee;
+      --muted: #a3b3b0;
+      --line: #3b4c49;
+      --cherry: #e0566b;
+      --green: #6fb39e;
+      --card: #202d2b;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 28px 18px 40px;
+  }
+  main { max-width: 440px; margin: 0 auto; }
+  h1 {
+    font-family: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
+    font-size: 2rem;
+    line-height: 1.25;
+    margin: 0 0 8px;
+    letter-spacing: .02em;
+  }
+  .lead { color: var(--muted); margin: 0 0 24px; }
+  form {
+    background: var(--card);
+    border-top: 6px solid var(--cherry);
+    border-radius: 6px;
+    padding: 24px 20px;
+    box-shadow: 0 1px 0 var(--line);
+  }
+  label { display: block; font-weight: 600; margin-bottom: 6px; }
+  .field { margin-bottom: 18px; }
+  input[type=text], input[type=tel], input[type=email] {
+    width: 100%;
+    font: inherit;
+    font-size: 1.05rem;
+    padding: 12px 12px;
+    color: var(--ink);
+    background: transparent;
+    border: 1.5px solid var(--line);
+    border-radius: 4px;
+  }
+  input:focus-visible, button:focus-visible {
+    outline: 3px solid var(--green);
+    outline-offset: 2px;
+  }
+  .consent { display: flex; gap: 10px; align-items: flex-start; font-size: .9rem; color: var(--muted); margin-bottom: 20px; }
+  .consent input { margin-top: 5px; width: 18px; height: 18px; flex: none; }
+  button {
+    width: 100%;
+    font: inherit;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 14px;
+    color: #fff;
+    background: var(--cherry);
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  button[disabled] { opacity: .6; cursor: progress; }
+  .msg { margin-top: 14px; min-height: 1.5em; font-size: .95rem; }
+  .msg.error { color: var(--cherry); }
+  .hp { position: absolute; left: -9999px; }
+  .done { display: none; text-align: center; padding: 36px 8px; }
+  .done h2 { font-family: "Noto Serif TC", "Songti TC", serif; font-size: 1.6rem; margin: 0 0 8px; }
+  .done button { background: var(--green); margin-top: 20px; }
+  body.sent form { display: none; }
+  body.sent .done { display: block; }
+</style>
+</head>
+<body>
+<main>
+  <h1>歡迎來到<br>〔展會名稱〕</h1>
+  <p class="lead">留下聯絡方式，我們會寄給你試喝優惠與活動資訊。</p>
+
+  <form id="f" novalidate>
+    <div class="field">
+      <label for="name">姓名</label>
+      <input id="name" name="name" type="text" autocomplete="name" required>
+    </div>
+    <div class="field">
+      <label for="phone">電話</label>
+      <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="0912345678" required>
+    </div>
+    <div class="field">
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" autocomplete="email" required>
+    </div>
+
+    <!-- 防機器人欄位，真人看不到 -->
+    <input class="hp" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+    <label class="consent">
+      <input type="checkbox" id="agree" required>
+      <span>我同意〔公司名稱〕僅將以上資料用於本次展會後續的活動與產品資訊通知。</span>
+    </label>
+
+    <button id="btn" type="submit">送出資料</button>
+    <div id="msg" class="msg" role="status" aria-live="polite"></div>
+  </form>
+
+  <section class="done" aria-live="polite">
+    <h2>收到了，謝謝！</h2>
+    <p>記得到攤位領取你的試喝杯。</p>
+    <button type="button" id="again">再填一筆</button>
+  </section>
+</main>
+
+<script>
+  // ↓↓↓ 換成你部署 Apps Script 後拿到的網址 ↓↓↓
+  const ENDPOINT = "https://script.google.com/macros/s/XXXXXXXX/exec";
+
+  const form = document.getElementById("f");
+  const btn = document.getElementById("btn");
+  const msg = document.getElementById("msg");
+
+  function showError(text) { msg.textContent = text; msg.className = "msg error"; }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    msg.textContent = ""; msg.className = "msg";
+
+    const data = new FormData(form);
+    const name = data.get("name").trim();
+    const phone = data.get("phone").trim();
+    const email = data.get("email").trim();
+
+    if (!name) return showError("請填寫姓名");
+    if (!/^[0-9+\-\s()]{8,15}$/.test(phone)) return showError("請確認電話號碼格式");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showError("請確認 Email 格式");
+    if (!document.getElementById("agree").checked) return showError("請勾選同意聲明");
+
+    btn.disabled = true;
+    btn.textContent = "送出中⋯";
+    try {
+      // 用 URL 編碼表單 + no-cors，避開 Apps Script 的跨網域限制
+      await fetch(ENDPOINT, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ name, phone, email, website: data.get("website") })
+      });
+      form.reset();
+      document.body.classList.add("sent");
+    } catch (err) {
+      showError("送出失敗，請確認網路後再試一次");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "送出資料";
+    }
+  });
+
+  document.getElementById("again").addEventListener("click", () => {
+    document.body.classList.remove("sent");
+    document.getElementById("name").focus();
+  });
+</script>
+</body>
+</html>
