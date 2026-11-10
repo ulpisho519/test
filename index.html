@@ -2,136 +2,185 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>咖啡展 · 留下聯絡方式</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>取得第一手 Brezi 咖啡機優惠資訊</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #e9eef0;
-    --ink: #1d2b2a;
-    --muted: #5b6b69;
-    --line: #b9c6c8;
-    --cherry: #b3263e;
-    --green: #2f5d50;
-    --card: #ffffff;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #17211f;
-      --ink: #eaf0ee;
-      --muted: #a3b3b0;
-      --line: #3b4c49;
-      --cherry: #e0566b;
-      --green: #6fb39e;
-      --card: #202d2b;
-    }
+    --roast: #24160f;
+    --roast-soft: #3a261c;
+    --crema: #c9a26b;
+    --crema-deep: #a8814c;
+    --porcelain: #f7f5f1;
+    --ink: #2b1d16;
+    --muted: #7a6a5f;
+    --line: #d8cfc4;
+    --error: #a3302a;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; }
   body {
-    background: var(--bg);
+    background: var(--porcelain);
     color: var(--ink);
     font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
-    line-height: 1.6;
+    line-height: 1.65;
     min-height: 100vh;
-    padding: 28px 18px 40px;
   }
-  main { max-width: 440px; margin: 0 auto; }
-  h1 {
+
+  /* 上方深焙色區塊 */
+  header {
+    position: relative;
+    overflow: hidden;
+    background: var(--roast);
+    color: #f3ebe0;
+    padding: calc(env(safe-area-inset-top, 0px) + 44px) 24px 96px;
+  }
+  .rings {
+    position: absolute;
+    right: -120px; top: -110px;
+    width: 420px; height: 420px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle, var(--roast-soft) 0 18%, transparent 18.2%),
+      repeating-radial-gradient(circle, transparent 0 17px, rgba(201,162,107,.28) 17px 18px);
+    -webkit-mask-image: radial-gradient(circle, #000 35%, transparent 72%);
+            mask-image: radial-gradient(circle, #000 35%, transparent 72%);
+    pointer-events: none;
+  }
+  .head-inner { position: relative; max-width: 460px; margin: 0 auto; }
+  .brand {
+    font-family: "Cormorant Garamond", "Noto Serif TC", serif;
+    font-weight: 600;
+    font-size: 3.4rem;
+    line-height: 1;
+    letter-spacing: .06em;
+    margin: 0 0 14px;
+    color: var(--crema);
+  }
+  .tagline {
     font-family: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
-    font-size: 2rem;
-    line-height: 1.25;
-    margin: 0 0 8px;
-    letter-spacing: .02em;
+    font-weight: 500;
+    font-size: 1.3rem;
+    letter-spacing: .08em;
+    margin: 0;
   }
-  .lead { color: var(--muted); margin: 0 0 24px; }
-  form {
-    background: var(--card);
-    border-top: 6px solid var(--cherry);
-    border-radius: 6px;
-    padding: 24px 20px;
-    box-shadow: 0 1px 0 var(--line);
+
+  /* 表單卡片 */
+  main { max-width: 460px; margin: -64px auto 0; padding: 0 18px calc(env(safe-area-inset-bottom, 0px) + 40px); position: relative; }
+  .card {
+    background: #fff;
+    border-radius: 3px;
+    padding: 30px 24px 26px;
+    box-shadow: 0 18px 40px -22px rgba(36,22,15,.55), 0 1px 0 rgba(36,22,15,.06);
   }
-  label { display: block; font-weight: 600; margin-bottom: 6px; }
-  .field { margin-bottom: 18px; }
+  .lead { margin: 0 0 26px; color: var(--muted); font-size: .98rem; }
+
+  .field { margin-bottom: 22px; }
+  label.t { display: block; font-size: .85rem; font-weight: 500; color: var(--muted); margin-bottom: 2px; letter-spacing: .04em; }
   input[type=text], input[type=tel], input[type=email] {
     width: 100%;
     font: inherit;
-    font-size: 1.05rem;
-    padding: 12px 12px;
+    font-size: 1.1rem;
+    padding: 8px 0 10px;
     color: var(--ink);
     background: transparent;
-    border: 1.5px solid var(--line);
-    border-radius: 4px;
+    border: 0;
+    border-bottom: 1.5px solid var(--line);
+    border-radius: 0;
+    transition: border-color .2s;
   }
-  input:focus-visible, button:focus-visible {
-    outline: 3px solid var(--green);
-    outline-offset: 2px;
-  }
-  .consent { display: flex; gap: 10px; align-items: flex-start; font-size: .9rem; color: var(--muted); margin-bottom: 20px; }
-  .consent input { margin-top: 5px; width: 18px; height: 18px; flex: none; }
+  input::placeholder { color: #b9ada2; }
+  input:focus { outline: none; border-bottom-color: var(--crema-deep); }
+  input:focus-visible { box-shadow: 0 2px 0 0 var(--crema-deep); }
+
+  .consent { display: flex; gap: 12px; align-items: flex-start; font-size: .85rem; color: var(--muted); margin: 6px 0 24px; cursor: pointer; }
+  .consent input { margin-top: 4px; width: 18px; height: 18px; flex: none; accent-color: var(--crema-deep); }
+
   button {
     width: 100%;
     font: inherit;
     font-weight: 700;
-    font-size: 1.1rem;
-    padding: 14px;
-    color: #fff;
-    background: var(--cherry);
+    font-size: 1.05rem;
+    letter-spacing: .12em;
+    padding: 15px;
+    color: var(--roast);
+    background: var(--crema);
     border: 0;
-    border-radius: 4px;
+    border-radius: 3px;
     cursor: pointer;
+    transition: background .2s;
   }
+  button:hover { background: #d3b07e; }
+  button:focus-visible { outline: 3px solid var(--roast); outline-offset: 3px; }
   button[disabled] { opacity: .6; cursor: progress; }
-  .msg { margin-top: 14px; min-height: 1.5em; font-size: .95rem; }
-  .msg.error { color: var(--cherry); }
+
+  .msg { margin-top: 14px; min-height: 1.5em; font-size: .92rem; }
+  .msg.error { color: var(--error); }
   .hp { position: absolute; left: -9999px; }
-  .done { display: none; text-align: center; padding: 36px 8px; }
-  .done h2 { font-family: "Noto Serif TC", "Songti TC", serif; font-size: 1.6rem; margin: 0 0 8px; }
-  .done button { background: var(--green); margin-top: 20px; }
+
+  .done { display: none; text-align: center; padding: 30px 6px 10px; }
+  .done h2 { font-family: "Noto Serif TC", "Songti TC", serif; font-weight: 600; font-size: 1.6rem; margin: 0 0 10px; letter-spacing: .06em; }
+  .done p { color: var(--muted); margin: 0 0 24px; }
+  .done button { background: transparent; color: var(--ink); border: 1.5px solid var(--ink); }
+  .done button:hover { background: var(--porcelain); }
   body.sent form { display: none; }
   body.sent .done { display: block; }
+
+  footer { max-width: 460px; margin: 22px auto 0; text-align: center; font-size: .78rem; color: var(--muted); letter-spacing: .06em; }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
 <body>
+<header>
+  <div class="rings" aria-hidden="true"></div>
+  <div class="head-inner">
+    <p class="brand">Brezi</p>
+    <h1 class="tagline" style="font-size:1.3rem;line-height:1.5">取得第一手 Brezi 咖啡機優惠資訊</h1>
+  </div>
+</header>
+
 <main>
-  <h1>歡迎來到<br>〔展會名稱〕</h1>
-  <p class="lead">留下聯絡方式，我們會寄給你試喝優惠與活動資訊。</p>
+  <div class="card">
+    <form id="f" novalidate>
+      <p class="lead">留下聯絡方式，我們會寄給你咖啡機的最新優惠和訊息。</p>
 
-  <form id="f" novalidate>
-    <div class="field">
-      <label for="name">姓名</label>
-      <input id="name" name="name" type="text" autocomplete="name" required>
-    </div>
-    <div class="field">
-      <label for="phone">電話</label>
-      <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="0912345678" required>
-    </div>
-    <div class="field">
-      <label for="email">Email</label>
-      <input id="email" name="email" type="email" autocomplete="email" required>
-    </div>
+      <div class="field">
+        <label class="t" for="name">姓名</label>
+        <input id="name" name="name" type="text" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label class="t" for="phone">電話</label>
+        <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="0912345678" required>
+      </div>
+      <div class="field">
+        <label class="t" for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" required>
+      </div>
 
-    <!-- 防機器人欄位，真人看不到 -->
-    <input class="hp" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <input class="hp" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true">
 
-    <label class="consent">
-      <input type="checkbox" id="agree" required>
-      <span>我同意〔公司名稱〕僅將以上資料用於本次展會後續的活動與產品資訊通知。</span>
-    </label>
+      <label class="consent">
+        <input type="checkbox" id="agree" required>
+        <span>我同意聯智股份有限公司僅將以上資料用於 Brezi 咖啡機的優惠與產品資訊通知。</span>
+      </label>
 
-    <button id="btn" type="submit">送出資料</button>
-    <div id="msg" class="msg" role="status" aria-live="polite"></div>
-  </form>
+      <button id="btn" type="submit">送出資料</button>
+      <div id="msg" class="msg" role="status" aria-live="polite"></div>
+    </form>
 
-  <section class="done" aria-live="polite">
-    <h2>收到了，謝謝！</h2>
-    <p>記得到攤位領取你的試喝杯。</p>
-    <button type="button" id="again">再填一筆</button>
-  </section>
+    <section class="done" aria-live="polite">
+      <h2>感謝你的留言</h2>
+      <p>我們會盡快寄上 Brezi 的最新優惠。</p>
+      <button type="button" id="again">再填一筆</button>
+    </section>
+  </div>
+  <footer>聯智股份有限公司</footer>
 </main>
 
 <script>
-  // ↓↓↓ 換成你部署 Apps Script 後拿到的網址 ↓↓↓
   const ENDPOINT = "https://script.google.com/macros/s/AKfycbxXD6rc2eojA81Kt1nXlrwMrn20rbZJ_tvcTbXyIjegWftMgpcx741pcjbD7IsbnNZpBw/exec";
 
   const form = document.getElementById("f");
@@ -157,7 +206,6 @@
     btn.disabled = true;
     btn.textContent = "送出中⋯";
     try {
-      // 用 URL 編碼表單 + no-cors，避開 Apps Script 的跨網域限制
       await fetch(ENDPOINT, {
         method: "POST",
         mode: "no-cors",
